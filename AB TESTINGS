@@ -1,0 +1,83 @@
+# does beach acess reduce days on market?
+# Split into groups
+from scipy.stats import ttest_ind
+check = df[df['has_beach_access'] == 0]
+sol   = df[df['has_beach_access'] == 1]
+
+# Hypothesis Test:does beach acess reduce days on market?
+stat, p_value = ttest_ind(sol['days_on_market'], check['days_on_market'], equal_var=False)
+print("A/B TEST RESULTS: BEACH ACESS IMPACT")
+print(f"Without beach access: {check['days_on_market'].mean():,.0f}")
+print(f"With beach access: {sol['days_on_market'].mean():,.0f}")
+print(f"Difference: {((sol['days_on_market'].mean()/check['days_on_market'].mean())-1)*100:.1f}%")
+print(f"P-value: {p_value:.4f}")
+print(f"Statistically Significant: {'YES' if p_value < 0.05 else 'NO'}")
+
+A/B TEST RESULTS: BEACH ACESS IMPACT
+Without beach access: 65
+With beach access: 35
+Difference: -45.9%
+P-value: 0.0000
+Statistically Significant: YES
+
+
+# do properties near metro sell for premium
+from scipy.stats import ttest_ind
+
+# Split groups
+yes_metro = df[df['near_metro'] == 1]
+no_metro  = df[df['near_metro'] == 0]
+
+# T-test on PRICE
+stat, p_value = ttest_ind(
+    yes_metro['price_aed'],
+    no_metro['price_aed'],
+    equal_var=False
+)
+
+print("A/B TEST: METRO PREMIUM EFFECT")
+print(f"Near Metro Avg Price:     {yes_metro['price_aed'].mean():,.0f} AED")
+print(f"Not Near Metro Avg Price: {no_metro['price_aed'].mean():,.0f} AED")
+
+difference = ((yes_metro['price_aed'].mean() / no_metro['price_aed'].mean()) - 1) * 100
+print(f"Difference: {difference:.1f}%")
+
+print(f"P-value: {p_value:.4f}")
+print(f"Statistically Significant: {'YES' if p_value < 0.05 else 'NO'}")
+
+A/B TEST: METRO PREMIUM EFFECT
+Near Metro Avg Price:     3,868,734 AED
+Not Near Metro Avg Price: 4,039,166 AED
+Difference: -4.2%
+P-value: 0.4865
+Statistically Significant: NO
+
+
+# "Does 'Palm Jumeirah' name increase value vs just location
+A = df[df['location']== "Palm Jumeirah"]
+B = df[df['location']!= "Palm Jumeirah"]
+
+# T-test on PRICE
+stat, p_value = ttest_ind(
+    A['price_aed'],
+    B['price_aed'],
+    equal_var=False
+)
+
+print("A/B TEST: METRO PREMIUM EFFECT")
+print(f"Yes:{A['price_aed'].mean():,.0f} AED")
+print(f"No {B['price_aed'].mean():,.0f} AED")
+
+difference = ((A['price_aed'].mean() / B['price_aed'].mean()) - 1) * 100
+print(f"Difference: {difference:.1f}%")
+
+print(f"P-value: {p_value:.4f}")
+print(f"Statistically Significant: {'YES' if p_value < 0.05 else 'NO'}")
+
+A/B TEST: METRO PREMIUM EFFECT
+Yes:6,294,754 AED
+No 3,663,480 AED
+Difference: 71.8%
+P-value: 0.0000
+Statistically Significant: YES
+
